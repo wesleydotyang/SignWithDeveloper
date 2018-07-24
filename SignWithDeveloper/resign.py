@@ -159,30 +159,13 @@ def start(dummyAppPath):
 
 	# ============ Resign ============ #
 	codesign(inputAppPath,codesignIdentity,entitlementsPath)
-	# os.system('codesign -s "%s" --entitlements "%s" -f "%s" ' % (codesignIdentity,entitlementsPath,inputAppPath+"/Frameworks/PAFaceCheck.framework"))
-
 
 
 	#copy file
 	shutil.rmtree(dummyAppPath)
 	os.system('cp -r "%s" "%s"' % (inputAppPath,dummyAppPath))
 
-	# with open(overviewFile, 'w') as f:
-	# 	f.write(dummyAppOverview)
 
-
-
-
-
-#导出entitlements.xml,替换entitl
-#替换embedded.mobileprovision
-#修改Info.plist的bundleid
-
-# codesign -d --entitlements entitlement.xml SignWithDeveloper.app
-# codesign -s - --entitlements entitlement.xml -f SignWithDeveloper
-#签名、framework签名
-# codesign -s "iPhone Developer: yca89393@qq.com (92TB9AQ7MT)" --entitlements entitlement.xml -f PAQZZ.app/Frameworks/PAFaceCheck.framework
-# codesign -s "iPhone Developer: yca89393@qq.com (92TB9AQ7MT)" --entitlements entitlement.xml -f SignWithDeveloper.app
 
 start(sys.argv[1])
 
