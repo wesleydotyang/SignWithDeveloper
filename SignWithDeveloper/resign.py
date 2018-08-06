@@ -55,10 +55,11 @@ def getInputAppPath(inFolder):
 def codesign(appPath,identity,entitlements):
 	os.system('codesign -s "%s" --entitlements "%s" -f "%s" ' % (identity,entitlements,appPath))
 	frameworkPath = os.path.join(appPath,"Frameworks")
-	for fileName in os.listdir(frameworkPath):  
-		filePath = os.path.join(frameworkPath, fileName) 
-		if fileName.endswith(".framework") or fileName.endswith(".dylib"):
-			os.system('codesign -s "%s" --entitlements "%s" -f "%s" ' % (identity,entitlements,filePath))
+	if os.path.exists(frameworkPath):
+		for fileName in os.listdir(frameworkPath):  
+			filePath = os.path.join(frameworkPath, fileName) 
+			if fileName.endswith(".framework") or fileName.endswith(".dylib"):
+				os.system('codesign -s "%s" --entitlements "%s" -f "%s" ' % (identity,entitlements,filePath))
 
 
 
@@ -159,6 +160,13 @@ def start(dummyAppPath):
 
 	# ============ Resign ============ #
 	codesign(inputAppPath,codesignIdentity,entitlementsPath)
+
+	# make executable
+	(filepath,executableNameFull) = os.path.split(inputAppPath);
+	(executableName,extension) = os.path.splitext(executableNameFull);
+	executablePath = os.path.join(inputAppPath,executableName)
+	os.system("chmod +x " + executablePath)
+	#os.system('rm ' + os.path.join(inputAppPath,"archived-expanded-entitlements.xcent"))
 
 
 	#copy file
