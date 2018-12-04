@@ -1,0 +1,1 @@
+Put ipa or app file in this folder

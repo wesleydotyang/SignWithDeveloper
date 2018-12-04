@@ -2,7 +2,7 @@
 
 # This script is used to resign ipa with default project's provision file
 
-import os,sys,shutil
+import os,sys,shutil,re,json
 import subprocess
 
 
@@ -116,9 +116,9 @@ def start(dummyAppPath):
 	print(dummyCodesignOverview)
 
 	codesignIdentity = codesignConfigOfKey(dummyCodesignOverview,'Authority')
-	print(codesignIdentity)
+	print("CodeSignId:" + codesignIdentity)
 	bundleId = codesignConfigOfKey(dummyCodesignOverview,'Identifier')
-	print(bundleId)
+	print("NewBundleId:" + bundleId)
 
 
 	# ============ Copy provision ============ #
@@ -129,23 +129,10 @@ def start(dummyAppPath):
 
 	# ============ Modify Info.plist ============ #
 
-	#somebody may not have installed plistbuddy
 	infoPath = os.path.join(inputAppPath,"Info.plist")
-	infoToReplace = ''
-	with open(infoPath,'r') as f:
-		content = f.read()
-		lines = content.split('\n')
-		for i in range(0,len(lines)-1):
-			line = lines[i]
-			# print line
-			if line.strip(' \t') == "<key>CFBundleIdentifier</key>":
-				print("match info")
-				lines[i+1] = "	<string>%s</string>" % bundleId
+	print(infoPath)
+	executeShell("/usr/bin/plutil -replace 'CFBundleIdentifier' -string %s '%s'" % (bundleId, infoPath))
 
-		infoToReplace = "\n".join(lines)
-
-	with open(infoPath,'w') as f:
-		f.write(infoToReplace)
 
 	# ============ Remove plugins ============ #
 	pluginDir = os.path.join(inputAppPath,"PlugIns")
