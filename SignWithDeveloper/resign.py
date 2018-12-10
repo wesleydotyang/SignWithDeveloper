@@ -52,14 +52,23 @@ def getInputAppPath(inFolder):
 			return filePath
 
 
-def codesign(appPath,identity,entitlements):
-	os.system('codesign -s "%s" --entitlements "%s" -f "%s" ' % (identity,entitlements,appPath))
+def codesign(appPath,identity,entitlements,bundleId):
 	frameworkPath = os.path.join(appPath,"Frameworks")
 	if os.path.exists(frameworkPath):
 		for fileName in os.listdir(frameworkPath):  
 			filePath = os.path.join(frameworkPath, fileName) 
 			if fileName.endswith(".framework") or fileName.endswith(".dylib"):
-				os.system('codesign -s "%s" --entitlements "%s" -f "%s" ' % (identity,entitlements,filePath))
+				surffix = fileName.split('.')[0]
+				identifier = bundleId + "." + surffix
+				# update Info.plist
+				infoPath = os.path.join(filePath,"Info.plist")
+				if os.path.exists(infoPath):
+					executeShell("/usr/bin/plutil -replace 'CFBundleIdentifier' -string %s '%s'" % (identifier, infoPath))
+				# codesign
+				executeShell('codesign -s "%s" --entitlements "%s" -f "%s" -i %s' % (identity,entitlements,filePath,identifier))
+	executeShell('codesign -s "%s" --entitlements "%s" -f "%s" ' % (identity,entitlements,appPath))
+
+				
 
 
 
@@ -146,7 +155,7 @@ def start(dummyAppPath):
 	resCode,dummyCodesignOverview,err = executeShell('codesign -d --entitlements "%s" "%s" ' % (entitlementsPath,dummyAppPath))
 
 	# ============ Resign ============ #
-	codesign(inputAppPath,codesignIdentity,entitlementsPath)
+	codesign(inputAppPath,codesignIdentity,entitlementsPath,bundleId)
 
 	# make executable
 	(filepath,executableNameFull) = os.path.split(inputAppPath);
