@@ -167,7 +167,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SCRIPT_FILE=$SRCROOT/SignWithDeveloper/resign.py\nBUILD_APP_DIR=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\n\npython $SCRIPT_FILE $BUILD_APP_DIR";
+			shellScript = "SCRIPT_FILE=$SRCROOT/SignWithDeveloper/resign.py\nBUILD_APP_DIR=${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\n\npython \"$SCRIPT_FILE\" \"$BUILD_APP_DIR\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
